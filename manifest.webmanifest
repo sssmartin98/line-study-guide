@@ -1,0 +1,28 @@
+{
+ "name": "Romeo & Juliet \u2014 Line Study",
+ "short_name": "Line Study",
+ "description": "Actor's line-memorization and production script tool",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#1b0d10",
+ "theme_color": "#1b0d10",
+ "icons": [
+  {
+   "src": "./icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "./icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "./icon-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
