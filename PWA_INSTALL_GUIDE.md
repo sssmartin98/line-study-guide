@@ -1,96 +1,114 @@
-# Install Line Study as a Real App — 10-Minute Guide
+# Install and update Line Study
 
-The folder inside `pwa_app.zip` is a complete installable web app (a "PWA").
-Once it's hosted at a real web address, your phone and computer can install it
-like any app: home-screen icon, its own window, works fully offline, keeps your
-notes and edits saved. Hosting is the one step only you can do — it's free and
-takes minutes. Two easy options below; Netlify is the easiest.
+Line Study is a Progressive Web App (PWA): it can be installed like a normal
+app, works offline after its shell has been cached, and keeps production data
+on the device. The current project is hosted with GitHub Pages at:
 
-## Step 1 — Put the folder online (pick ONE)
+`https://sssmartin98.github.io/line-study-guide/`
 
-### Option A: Netlify Drop (easiest, no account needed to try)
-1. Unzip `pwa_app.zip` — you get a folder containing `index.html`, `sw.js`,
-   `manifest.webmanifest`, and three icon files.
-2. Go to **https://app.netlify.com/drop** in any browser.
-3. Drag the whole unzipped folder onto the page.
-4. In ~10 seconds you get a link like `https://something-random.netlify.app`.
-   That's your app's address. (Make a free account to keep the site permanently
-   and rename the link to something memorable.)
+The public site contains the app shell and the built-in public-domain play.
+Personal notes, edits, grades, and added plays stay in that browser's local
+storage unless the user deliberately exports a backup file.
 
-### Option B: GitHub Pages (if you already use GitHub)
-1. Make a new repository, upload the unzipped files to its root.
-2. Settings → Pages → Source: `main` branch, `/ (root)` → Save.
-3. Your app appears at `https://yourname.github.io/repo-name/`.
+## Install the app
 
-**Privacy note:** either way the app is on the public internet at an obscure
-address. It contains only the public-domain play text — your personal notes and
-edits are NEVER uploaded; they live only on your own devices and in your own
-`production_notes.json` files.
+### iPhone or iPad
 
-## Step 2 — Install it
+1. Open the address in Safari.
+2. Tap Share.
+3. Choose Add to Home Screen, then Add.
 
-**iPhone / iPad:** open your link in **Safari** → Share button → **Add to Home
-Screen** → Add. It appears with the gold R&J icon and opens full-screen.
+### Android
 
-**Android:** open the link in **Chrome** → you'll see an "Install app" prompt,
-or menu (⋮) → **Add to Home screen / Install app**.
+1. Open the address in Chrome.
+2. Use the Install app prompt, or open the menu and choose Install app / Add to
+   Home screen.
 
-**Computer (Windows / Mac / Linux):** open the link in **Chrome** or **Edge** →
-click the install icon (⊕ or a monitor-with-arrow) at the right end of the
-address bar → Install. It gets its own window, taskbar/dock icon, and works
-offline.
+### Windows, macOS, or Linux
 
-## Saving — how it works in the installed app
+1. Open the address in Chrome or Edge.
+2. Select the install icon in the address bar.
+3. Confirm Install.
 
-- Everything autosaves on the device as you work (notes, cuts, rewords,
-  inserts, flashcard progress, settings).
-- **Save to file** downloads `production_notes.json` — your durable backup.
-  Do this after any serious session.
-- **Load file** restores a backup — and this is also how you move your work
-  between phone and computer (the two devices don't sync automatically:
-  save the file on one, send it to yourself, load it on the other).
+## Saving and moving work
 
-## Updating the app later — now with one-tap in-app updates
+- The app autosaves notes, cuts, rewordings, inserts, recasting, presets,
+  grades, and view settings on the current device when browser storage is
+  available.
+- Save to file exports the open play's production overlay.
+- Back up everything exports the entire library and all overlays.
+- Export bundle packages one user-added play together with its overlay.
+- Load file / Add from file restores those exports.
+- Devices do not synchronize automatically. Export on one device and import on
+  the other.
+- Link backup file is supported by compatible desktop Chromium browsers. The
+  app remembers the handle and asks for one Relink permission tap after
+  reopening before silent overwrites resume.
 
-Since v9.2 the app checks `version.json` on your site (once a day, or via
-"⟳ Check for updates" on the Library screen) and shows an **Update now** button
-when a newer version is published. Tapping it saves your work, clears the app
-shell, and reloads fresh — notes are untouched. So updating is now:
+Keep file backups after serious work. Browser autosave is convenient, not a
+substitute for a separate recovery copy.
 
-1. On GitHub, upload the new `index.html` (overwrites the old one).
-2. Edit `version.json` → raise the version number → Commit.
-3. Optionally still bump the CACHE line in `sw.js` (belt-and-braces: it lets
-   apps update even for users who never tap the button).
-4. On your devices: open the app online → tap Update now when offered.
+## Source project versus published files
 
-## The old manual way (still works)
+The editable source project contains `template.html`, `play.json`, tests,
+builders, release tooling, documentation, and the source PDF. The published
+GitHub Pages root contains only the deployable shell:
 
-When a future chat produces a new `index.html` (new features, a different play):
-1. Open `sw.js` and bump the version line (`line-study-v9` → `line-study-v9`).
-2. Re-upload the folder to the same Netlify site (Deploys → drag folder again)
-   or replace the files on GitHub.
-3. Close and reopen the installed app twice — the new version takes over.
-Your notes survive updates (they're stored on the device, not in the app files)
-— but Save to file first anyway. Always.
+- `index.html`
+- `sw.js`
+- `manifest.webmanifest`
+- `version.json`
+- `icon-192.png`
+- `icon-512.png`
+- `icon-maskable.png`
+- this installation guide
 
-## Rolling back a bad update
+Do not edit generated `index.html` directly. Change `template.html`, test, and
+regenerate through the release workflow.
 
-If a new version misbehaves, put the old one back — GitHub keeps every version:
-1. In your repo, click the clock/"commits" link → find the last good commit →
-   open it → "Browse files" → download the old `index.html`, `sw.js`,
-   `version.json` — or simply click "Revert" on the bad commit.
-2. Re-upload those three (or commit the revert). Raise the number in
-   `version.json` ABOVE the bad one (e.g. bad was 9.4.0 → set 9.4.1) so
-   installed apps see the rollback as an update and offer "Update now".
-3. On a stuck device: open the app → Library → "ⓘ App health" shows the running
-   version and caches; the "Repair & reload" banner (or Update now) pulls the
-   reverted files. Notes are never touched by any of this.
+## Publish an update
 
-## If something doesn't work
+Public versions continue from `1.0.x`. Never publish a `9.x` version.
 
-- No install prompt? The address must start with `https://` — both options
-  above provide that automatically.
-- App shows an old version after updating? You skipped the `sw.js` version
-  bump in step 1 of "Updating."
-- Want to test before hosting? The plain `romeo_juliet_line_study_v9.html`
-  file works identically (minus the icon/install) when opened in any browser.
+1. Ensure `release.py` can locate the deployment shell at `../pwa_app_5`, or
+   select it explicitly with `--pwa-dir`. A missing PWA folder is a release
+   blocker, not something to skip.
+2. Update `CHANGELOG.md` with an honest user-facing entry.
+3. Run the complete behavioral and stress suites.
+4. Run `release.py` with the next public semantic version and release notes,
+   for example:
+
+   `python3 release.py 1.0.2 --notes "Brief user-facing summary"`
+
+5. Verify the generated standalone file and PWA `index.html` match, and verify
+   the HTML version, `version.json`, and service-worker cache version agree.
+6. Verify both generated ZIP archives from a clean extraction.
+7. Keep the source kit private/local. Commit only the deployment-shell files to
+   the public GitHub repository, preferably through a reviewed branch or pull
+   request. Maintain a separate private backup of the source kit.
+8. After GitHub Pages deploys, confirm that every PWA asset returns successfully
+   and perform an online/offline browser smoke test.
+
+The app checks `version.json` at most once a day and also offers Check for
+updates in the Library. Update now creates a full backup, removes the old app
+shell, and reloads it. Local production data is not intentionally deleted by an
+update, but a separate backup is still required before publishing or installing
+major changes.
+
+## Roll back a bad release
+
+Never make the hosted version number lower. Instead, restore the last known-good
+source content and publish it as a new, higher patch version. For example, if
+`1.0.2` is faulty, restore the good content and publish it as `1.0.3`. This lets
+installed apps recognize the repaired build as a newer update.
+
+## Troubleshooting
+
+- No install option: confirm the page uses HTTPS and try Safari on iOS or
+  Chrome/Edge elsewhere.
+- Old shell after deployment: confirm `APP_VERSION`, `version.json`, and the
+  `sw.js` cache name all match, then use Library > App health or Repair & reload.
+- Missing work: check that the same browser/profile is being used, then restore
+  the most recent exported backup.
+- Offline startup fails: verify every shell asset is present and that `sw.js`
+  is non-empty, registered, and using the current cache name.

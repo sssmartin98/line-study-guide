@@ -1,0 +1,54 @@
+name: Validate deployment shell
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out deployment files
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Validate version, privacy, and required assets
+        shell: python
+        run: |
+          import json, pathlib, re, struct
+
+          root = pathlib.Path('.')
+          required = ['index.html', 'sw.js', 'version.json', 'manifest.webmanifest',
+                      'icon-192.png', 'icon-512.png', 'icon-maskable.png',
+                      'PWA_INSTALL_GUIDE.md']
+          missing = [name for name in required if not (root / name).is_file()]
+          assert not missing, 'Missing deployment files: ' + ', '.join(missing)
+
+          html = (root / 'index.html').read_text(encoding='utf-8')
+          sw = (root / 'sw.js').read_text(encoding='utf-8')
+          version = json.loads((root / 'version.json').read_text(encoding='utf-8'))['version']
+          manifest = json.loads((root / 'manifest.webmanifest').read_text(encoding='utf-8'))
+          app_version = re.search(r"const APP_VERSION='([^']+)'", html)
+          cache_version = re.search(r"const CACHE = 'line-study-([^']+)'", sw)
+          assert app_version and app_version.group(1) == version, 'index/version mismatch'
+          assert cache_version and cache_version.group(1).replace('-', '.') == version, 'cache/version mismatch'
+          assert manifest.get('display') in ('standalone', 'fullscreen'), 'manifest is not installable'
+          assert '<meta name="robots" content="noindex, nofollow">' in html, 'noindex missing'
+          assert '<meta name="referrer" content="no-referrer">' in html, 'no-referrer missing'
+          assert not re.search(r'<(?:script|link)[^>]+(?:src|href)=["\']https?://', html, re.I), 'external runtime dependency found'
+
+          forbidden = [str(path) for path in root.rglob('*') if path.is_file()
+                       and (path.suffix.lower() in {'.py', '.pdf', '.zip'} or 'tests' in path.parts or 'docs' in path.parts)]
+          assert not forbidden, 'Private/development files found: ' + ', '.join(forbidden)
+
+          expected = {'icon-192.png': (192, 192), 'icon-512.png': (512, 512), 'icon-maskable.png': (512, 512)}
+          for name, size in expected.items():
+              data = (root / name).read_bytes()[:24]
+              assert data[:8] == b'\x89PNG\r\n\x1a\n', name + ' is not a PNG'
+              assert struct.unpack('>II', data[16:24]) == size, name + ' has wrong dimensions'
+
+          print('Deployment shell validation passed for version', version)
