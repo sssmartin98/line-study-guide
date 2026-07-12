@@ -1,4 +1,4 @@
 {
- "version": "1.0.1",
- "notes": "Help now explains every button; smarter backups (linked backup file, persistent storage)"
+ "version": "1.0.2",
+ "notes": "Scene cuts, run-from-here, undo/redo, explicit entrance and exit tools, upgraded search and presets, safer backup recovery, and accessibility improvements."
 }
