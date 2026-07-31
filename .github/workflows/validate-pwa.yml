@@ -39,7 +39,11 @@ jobs:
           assert manifest.get('display') in ('standalone', 'fullscreen'), 'manifest is not installable'
           assert '<meta name="robots" content="noindex, nofollow">' in html, 'noindex missing'
           assert '<meta name="referrer" content="no-referrer">' in html, 'no-referrer missing'
+          csp = re.search(r'<meta http-equiv="Content-Security-Policy" content="([^"]+)">', html)
+          assert csp and all(rule in csp.group(1) for rule in
+                             ("object-src 'none'", "base-uri 'none'", "form-action 'none'", "connect-src 'self'")), 'security policy missing'
           assert not re.search(r'<(?:script|link)[^>]+(?:src|href)=["\']https?://', html, re.I), 'external runtime dependency found'
+          assert "e.request.method !== 'GET'" in sw and 'url.origin !== self.location.origin' in sw, 'service-worker request scope is too broad'
 
           forbidden = [str(path) for path in root.rglob('*') if path.is_file()
                        and (path.suffix.lower() in {'.py', '.pdf', '.zip'} or 'tests' in path.parts or 'docs' in path.parts)]
