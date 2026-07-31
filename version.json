@@ -1,4 +1,4 @@
 {
- "version": "1.0.2",
- "notes": "Scene cuts, run-from-here, undo/redo, explicit entrance and exit tools, upgraded search and presets, safer backup recovery, and accessibility improvements."
+ "version": "1.0.3",
+ "notes": "Adds quick Study tools, selected-scene navigation, favorite roles, easier first-run installation, and stronger browser security."
 }
