@@ -2,7 +2,7 @@
 // The CACHE name is stamped by release.py on every release; installed apps
 // fetch the new shell when it changes. Do not add version.json to SHELL —
 // the in-app update checker must always read it from the network.
-const CACHE = 'line-study-1-0-3';
+const CACHE = 'line-study-1-1-0';
 const SHELL = ['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable.png'];
 const SHELL_PATHS = new Set(SHELL.map(path => new URL(path, self.location.href).pathname));
 self.addEventListener('install', e => {
